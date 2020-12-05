@@ -1,0 +1,22 @@
+{% extends "otree_redwood/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Your Choice
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{% static 'random-number-game/random-number/random-number.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% with config=subsession.config %}
+        <random-number
+            period-length='{{ config.duration }}'
+            num-players='{{ player.num_players }}'
+            round-number='{{ subsession.round_number }}'
+        ></random-number>
+    {% endwith %}
+    {% next_button %}
+
+{% endblock %}
