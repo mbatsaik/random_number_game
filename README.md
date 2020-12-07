@@ -1,5 +1,7 @@
 # random_number_game
 
+Note: The game requires otree redwood: https://github.com/Leeps-Lab/otree-redwood/wiki
+
 ### Suggested session config:
 
 ```
