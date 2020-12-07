@@ -35,9 +35,8 @@ export class RandomNumber extends PolymerElement {
                 on-event="_handleNumberEvent">
             </redwood-channel>
             <div class="layout vertical center">
-                <template is="dom-if" if="{{ _practice }}">
-                    <h1> Practice Stage </h1>
-                </template>
+                
+                    <h1> Stage [[stage]] </h1>
                         <paper-progress
                             value="[[ _subperiodProgress ]]">
                         </paper-progress>
@@ -60,6 +59,9 @@ export class RandomNumber extends PolymerElement {
     static get properties() {
         return {
             roundNumber:{
+                type: Number
+            },
+            stage:{
                 type: Number
             },
             initialNumber:{
@@ -98,7 +100,8 @@ export class RandomNumber extends PolymerElement {
         }
         this.shadowRoot.querySelector('#number').value = '';
         let request = {
-            "id": this.$.constants.idInGroup,
+            'channel': 'incoming',
+            "id": parseInt(this.$.constants.idInGroup),
             "number": parseInt(this.randomNumber),
         }
         this.$.channel.send(request);
@@ -106,7 +109,7 @@ export class RandomNumber extends PolymerElement {
 
     _handleNumberEvent(event){
         let numberResponse = event.detail.payload;
-        if (numberResponse['id'] == this.$.constants.idInGroup) this.set("randomNumber", numberResponse['number']);
+        if (numberResponse['id'] == parseInt(this.$.constants.idInGroup)) this.set("randomNumber", numberResponse['number']);
     }
 
     _practice(){

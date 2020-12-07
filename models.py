@@ -137,9 +137,16 @@ class Group(RedwoodGroup):
         return parse_config(self.session.config['config_file'])[self.round_number-1]['stage']
     
     def set_payoffs(self):
+        events = list(self.events.filter(channel='number'))
+        for p in self.get_players():
+            p.set_correct_answers(events)
         if self.stage() == 2:
             for g in self.session.vars['gender_groups']:
-                g.sort(key=lambda x: x._correct_answers, reverse=True)
+                print(g)
+                g.sort(key=lambda x: self.get_player_by_id(x.id_in_group).correct_answers(), reverse=True)
+                for p in g:
+                    print(p)
+                    print(p.id_in_group, " correct answers: ", self.get_player_by_id(p.id_in_group).correct_answers())
         for p in self.get_players():
             p.set_payoff()
 
@@ -147,13 +154,12 @@ class Group(RedwoodGroup):
         print(event.value)
         id = event.value['id']
         player = self.get_player_by_id(int(id))
-        player._correct_answers += 1
-        print(player._correct_answers)
 
         num_string = ""
         for i in range(9):
             num_string += str(random.randint(1, 9))
         event.value['number'] = int(num_string)
+        event.value['channel'] = 'outgoing'
 
         # broadcast the updated data out to all subjects
         self.send('number', event.value)
@@ -189,25 +195,31 @@ class Player(BasePlayer):
     
     def initial_number(self):
         return self._initial_number
+    
+    def correct_answers(self):
+        return self._correct_answers
 
+    def set_correct_answers(self, events):
+        correct_answers = 0
+        for event in events:
+            if event.value['id'] == self.id_in_group and event.value['channel'] == 'incoming':
+                correct_answers += 1
+        self._correct_answers = correct_answers
 
     def set_payoff(self):
-        print(self._correct_answers)
+        print("set_payoff: ", self._correct_answers)
         if self.group.stage() == 0:
             self.payoff = self._correct_answers * 1500
         elif self.group.stage() == 1:
             self.payoff = self._correct_answers * 1500
-            print(self.payoff)
         elif self.group.stage() == 2:
             group = self.session.vars['gender_groups'][self.session.vars['gender_groups_ids'][self.id_in_group]]
             if group[0].id_in_group == self.id_in_group:
                 self.payoff = self._correct_answers * 6000
             else:
                 self.payoff = 0
-            print(self.payoff)
         elif self.group.stage() == 3 and self._choice == 1:
             self.payoff = self._correct_answers * 1500
-            print(self.payoff)
         elif self.group.stage() == 3 and self._choice == 2:
             group = self.session.vars['gender_groups'][self.session.vars['gender_groups_ids'][self.id_in_group]]
             
@@ -219,4 +231,3 @@ class Player(BasePlayer):
                 self.payoff = self._correct_answers * 6000
             else:
                 self.payoff = 0
-            print(self.payoff)

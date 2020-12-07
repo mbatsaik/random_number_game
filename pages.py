@@ -52,13 +52,15 @@ class ResultsWaitPage(WaitPage):
 
 class Results(Page):
 
-    timeout_seconds = 15
+    #timeout_seconds = 15
 
     def is_displayed(self):
         return self.subsession.config is not None
 
     def vars_for_template(self):
-        pass
+        return{
+            'correct_answers': self.player.correct_answers()
+        }
         
 
 class Payment(Page):
