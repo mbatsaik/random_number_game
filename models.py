@@ -1,5 +1,5 @@
 from otree.api import (
-    models, BaseConstants, BaseSubsession, BasePlayer
+    models, BaseConstants, BaseSubsession, BasePlayer, widgets,
 )
 
 from django.contrib.contenttypes.models import ContentType
@@ -33,6 +33,7 @@ def parse_config(config_file):
     for row in rows:
         rounds.append({
             'round_number': int(row['round_number']),
+            'stage': int(row['stage']),
             'duration': int(row['duration']),
             'shuffle_role': True if row['shuffle_role'] == 'TRUE' else False,
             'players_per_group': int(row['players_per_group']),
@@ -40,6 +41,7 @@ def parse_config(config_file):
     return rounds
 
 class Subsession(BaseSubsession):
+
     def num_rounds(self):
         return len(parse_config(self.session.config['config_file']))
 
@@ -63,7 +65,7 @@ class Subsession(BaseSubsession):
         group_matrix = []
         for silo in silos:
             silo_matrix = []
-            ppg = self.config['players_per_group']
+            ppg = num_players#self.config['players_per_group']
             for i in range(0, len(silo), ppg):
                 silo_matrix.append(silo[i:i+ppg])
             group_matrix.extend(otree.common._group_randomly(silo_matrix, fixed_id_in_group))
@@ -74,11 +76,50 @@ class Subsession(BaseSubsession):
             g.set_payoffs()
 
     def set_initial_numbers(self):
+        if self.round_number == 1:
+            self.session.vars['gender_groups_ids'] = {}
+            self.session.vars['gender_groups']  = []
+            num_gender_groups = len(self.get_players())/4
+            for i in range(int(num_gender_groups)):
+                self.session.vars['gender_groups'].append([])
+
+            males = []
+            m_pointer = 0
+            females = []
+            f_pointer = 0
+
+            for player in self.get_players():
+                if player._gender == 'Male':
+                    males.append(player)
+                if player._gender == 'Female':
+                    females.append(player)
+
+            for i in range(int(num_gender_groups)):
+                self.session.vars['gender_groups'][i].append(males[m_pointer])
+                males[m_pointer]._gender_group_id = i
+                self.session.vars['gender_groups_ids'].update({males[m_pointer].id_in_group : i})
+                m_pointer += 1
+                self.session.vars['gender_groups'][i].append(males[m_pointer])
+                self.session.vars['gender_groups_ids'].update({males[m_pointer].id_in_group : i})
+                males[m_pointer]._gender_group_id = i
+                m_pointer += 1
+                self.session.vars['gender_groups'][i].append(females[f_pointer])
+                self.session.vars['gender_groups_ids'].update({females[f_pointer].id_in_group : i})
+                females[f_pointer]._gender_group_id = i
+                f_pointer += 1
+                self.session.vars['gender_groups'][i].append(females[f_pointer])
+                self.session.vars['gender_groups_ids'].update({females[f_pointer].id_in_group : i})
+                females[f_pointer]._gender_group_id = i
+                f_pointer += 1
+            print(self.session.vars['gender_groups_ids'])
+
+
         for player in self.get_players():
             num_string = ""
             for i in range(9):
                 num_string += str(random.randint(1, 9))
             player._initial_number = int(num_string)
+            print(player.id_in_group, ": ", player._initial_number)
 
     @property
     def config(self):
@@ -96,11 +137,27 @@ class Group(RedwoodGroup):
         return parse_config(self.session.config['config_file'])[self.round_number-1]['stage']
     
     def set_payoffs(self):
+        if self.stage() == 2:
+            for g in self.session.vars['gender_groups']:
+                g.sort(key=lambda x: x._correct_answers, reverse=True)
         for p in self.get_players():
-            p.set_payoff(self.invested)
+            p.set_payoff()
 
     def _on_number_event(self, event=None, **kwargs):
-        pass
+        print(event.value)
+        id = event.value['id']
+        player = self.get_player_by_id(int(id))
+        player._correct_answers += 1
+        print(player._correct_answers)
+
+        num_string = ""
+        for i in range(9):
+            num_string += str(random.randint(1, 9))
+        event.value['number'] = int(num_string)
+
+        # broadcast the updated data out to all subjects
+        self.send('number', event.value)
+        self.save()
 
 
 
@@ -108,16 +165,58 @@ class Player(BasePlayer):
     silo_num = models.IntegerField()
     _initial_number = models.IntegerField()
     _correct_answers = models.IntegerField(initial=0)
+    _gender_group_id = models.IntegerField()
+
+    _gender =  models.StringField(
+        choices=[
+            'Male',
+            'Female',
+        ],
+        widget=widgets.RadioSelect,
+        label='Question: What is your gender?'
+    )
+    _choice =  models.IntegerField(
+        choices=[
+            1,
+            2
+        ],
+        widget=widgets.RadioSelect,
+        label='Question: What payment treatment?'
+    )
 
     def num_players(self):
         return parse_config(self.session.config['config_file'])[self.round_number-1]['players_per_group']
+    
+    def initial_number(self):
+        return self._initial_number
 
 
-    def set_payoff(self,invested):
+    def set_payoff(self):
+        print(self._correct_answers)
         if self.group.stage() == 0:
-            pass
+            self.payoff = self._correct_answers * 1500
         elif self.group.stage() == 1:
-            pass
+            self.payoff = self._correct_answers * 1500
+            print(self.payoff)
         elif self.group.stage() == 2:
-            pass
-        elif self.group.stage() == 3:
+            group = self.session.vars['gender_groups'][self.session.vars['gender_groups_ids'][self.id_in_group]]
+            if group[0].id_in_group == self.id_in_group:
+                self.payoff = self._correct_answers * 6000
+            else:
+                self.payoff = 0
+            print(self.payoff)
+        elif self.group.stage() == 3 and self._choice == 1:
+            self.payoff = self._correct_answers * 1500
+            print(self.payoff)
+        elif self.group.stage() == 3 and self._choice == 2:
+            group = self.session.vars['gender_groups'][self.session.vars['gender_groups_ids'][self.id_in_group]]
+            
+            newGroup = [(p.id_in_group , p.in_round(3)._correct_answers) for p in group if p.id_in_group is not self.id_in_group]
+            newGroup.append((self.id_in_group , self._correct_answers))
+            newGroup.sort(key=lambda x: x[1], reverse=True)
+
+            if newGroup[0][0] == self.id_in_group:
+                self.payoff = self._correct_answers * 6000
+            else:
+                self.payoff = 0
+            print(self.payoff)

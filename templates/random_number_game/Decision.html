@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script type="module" src="{% static 'random-number-game/random-number/random-number.js' %}"></script>
+    <script type="module" src="{% static 'random_number_game/random-number/random-number.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -15,8 +15,8 @@
             period-length='{{ config.duration }}'
             num-players='{{ player.num_players }}'
             round-number='{{ subsession.round_number }}'
+            initial-number='{{ player.initial_number}}'
         ></random-number>
     {% endwith %}
-    {% next_button %}
 
 {% endblock %}

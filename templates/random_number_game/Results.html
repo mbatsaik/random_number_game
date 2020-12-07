@@ -6,23 +6,9 @@
 {% endblock %}
 
 {% block content %}
+    <div>Payoff: {{player.payoff}}</div>
+    <div>Stage is over. Proceed to next stage </div>
 
-    <div>Your payoff in this round: {{ player.payoff }} </div>
-
-    <table class="table" style="margin-top:20px; margin-bottom:10px">
-        <th>
-            <td>Round</td>
-            <td>Payoff</td>
-        </th>
-        {% for item in payoffs %}
-            <tr>
-                <td></td>
-                <td>{{ item.index }}</td>
-                <td>{{ item.payoff }}</td>
-            </tr>
-        {% endfor %}
-                
-    </table>
     {% next_button %}
 
 {% endblock %}

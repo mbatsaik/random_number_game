@@ -34,14 +34,25 @@ export class RandomNumber extends PolymerElement {
                 channel="number"
                 on-event="_handleNumberEvent">
             </redwood-channel>
+            <div class="layout vertical center">
+                <template is="dom-if" if="{{ _practice }}">
+                    <h1> Practice Stage </h1>
+                </template>
+                        <paper-progress
+                            value="[[ _subperiodProgress ]]">
+                        </paper-progress>
 
-            <paper-progress
-                value="[[ _subperiodProgress ]]">
-            </paper-progress>
+                        <h1 style="-webkit-touch-callout: none; 
+                -webkit-user-select: none; 
+                -khtml-user-select: none; 
+                -moz-user-select: none; 
+                    -ms-user-select: none; 
+                        user-select: none; ">[[randomNumber]]</h1>
+                        <input id="number" type="text"  required>
+                        <button type="button" on-click="_confirm" on-tap="_confirm"> Confirm</button>
 
-            <h1>[[randomNumber]]</h1>
-            <input id="number" type="text"  required>
-            <button type="button" on-click="_confirm" on-tap="_confirm"> Confirm</button>
+            </div>
+            
         
         `
     }
@@ -49,6 +60,9 @@ export class RandomNumber extends PolymerElement {
     static get properties() {
         return {
             roundNumber:{
+                type: Number
+            },
+            initialNumber:{
                 type: Number
             },
             randomNumber:{
@@ -72,28 +86,31 @@ export class RandomNumber extends PolymerElement {
     }
 
     ready() {
-        super.ready()
-        
-        this.set("randomNumber", )
+        super.ready();
+        console.log(this.roundNumber);
+        this.set("randomNumber", this.initialNumber);
+        console.log(this.randomNumber);
     }
 
     _confirm(){
-        if(this.invested == true) return;
-        let time = this._subperiodProgress;
-        this.invested = true;
-        let investing = {
-            'id': this.$.constants.idInGroup,
-            'pcode': this.$.constants.participantCode,
-            'time': time,
-        };
-        console.log("Invested");
-        this.$.channel.send();
+        if(parseInt(this.shadowRoot.querySelector('#number').value) != this.randomNumber){
+            return;
+        }
+        this.shadowRoot.querySelector('#number').value = '';
+        let request = {
+            "id": this.$.constants.idInGroup,
+            "number": parseInt(this.randomNumber),
+        }
+        this.$.channel.send(request);
     }
 
     _handleNumberEvent(event){
-        this.invested = true;
-        console.log("Someone Invested");
-        this.$.button.click();
+        let numberResponse = event.detail.payload;
+        if (numberResponse['id'] == this.$.constants.idInGroup) this.set("randomNumber", numberResponse['number']);
+    }
+
+    _practice(){
+        return parseInt(this.roundNumber) != 1;
     }
 
     _onPeriodStart() {
@@ -127,4 +144,4 @@ export class RandomNumber extends PolymerElement {
     
 }
 
-window.customElements.define('leeps-invest', LeepsInvest);
+window.customElements.define('random-number', RandomNumber);

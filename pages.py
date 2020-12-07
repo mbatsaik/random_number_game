@@ -11,6 +11,19 @@ class Introduction(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+class GenderPage(Page):
+    form_model = 'player'
+    form_fields = ['_gender']
+
+    def is_displayed(self):
+        return self.round_number == 1
+
+class ChoicePage(Page):   
+    form_model = 'player'
+    form_fields = ['_choice']
+
+    def is_displayed(self):
+        return self.group.stage() == 3
 
 class DecisionWaitPage(WaitPage):
 
@@ -39,23 +52,14 @@ class ResultsWaitPage(WaitPage):
 
 class Results(Page):
 
-    timeout_seconds = 45
+    timeout_seconds = 15
 
     def is_displayed(self):
         return self.subsession.config is not None
 
     def vars_for_template(self):
-
-        payoffs = []
-
-        for i in range(1, self.round_number + 1):
-            payoffs.append({'index': i, 'payoff': self.player.in_round(i).payoff})
+        pass
         
-        print(payoffs)
-
-        return {
-            'payoffs': payoffs,
-        }
 
 class Payment(Page):
 
@@ -63,13 +67,21 @@ class Payment(Page):
         return self.round_number == self.subsession.num_rounds()
     
     def vars_for_template(self):
+        payoff_1 = self.player.in_round(2).payoff
+        payoff_2 = self.player.in_round(3).payoff
+        payoff_3 = self.player.in_round(4).payoff
+
         return {
-            'payoff': self.participant.payoff #.to_real_world_currency(self.session),
+            'payoff_1': payoff_1,
+            'payoff_2': payoff_2,
+            'payoff_3': payoff_3,
         }
 
 page_sequence = [
     Introduction,
+    GenderPage,
     DecisionWaitPage,
+    ChoicePage,
     Decision,
     ResultsWaitPage,
     Results,

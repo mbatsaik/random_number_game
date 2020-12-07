@@ -7,11 +7,30 @@
 
 {% block content %}
 
-<p>
-Congratulations! You have completed the experiment. The total points you earn in this experiment is {{ payoff }}.
-Please press next to end the experiment.
-</p>
+<div>Your payoffs </div>
 
-    {% next_button %}
+<table class="table" style="margin-top:20px; margin-bottom:10px">
+    <th>
+        <td>Stages</td>
+        <td>Payoff</td>
+    </th>
+        <tr>
+            <td></td>
+            <td>1</td>
+            <td>{{ payoff_1 }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>2</td>
+            <td>{{ payoff_2 }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>3</td>
+            <td>{{ payoff_3 }}</td>
+        </tr>
+            
+</table>
+{% next_button %}
 
 {% endblock %}
