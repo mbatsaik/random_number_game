@@ -1,0 +1,15 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block content %}
+    <!--<div>Payoff: {{player.payoff}}</div>-->
+    <div> Correct Answers: {{correct_answers}}</div>
+    <div>Stage is over. Proceed to next stage </div>
+
+    {% next_button %}
+
+{% endblock %}
