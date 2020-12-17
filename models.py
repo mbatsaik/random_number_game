@@ -75,51 +75,61 @@ class Subsession(BaseSubsession):
         for g in self.get_groups():
             g.set_payoffs()
 
+
+    '''
+    This function divides players into groups of 4 (2 male and 2 female)
+    and also sets the first random number for each player
+
+    Input: None
+    Output: None
+    '''
     def set_initial_numbers(self):
+        # Only in the first round
         if self.round_number == 1:
+            # Each player is assigned a group, 
+            # self.session.vars['gender_group_ids'] stores the id of the group for each player id
             self.session.vars['gender_groups_ids'] = {}
+            # self.session.vars['gender_groups'] stores the groups
             self.session.vars['gender_groups']  = []
+
+            # Initialize gender_groups
             num_gender_groups = len(self.get_players())/4
             for i in range(int(num_gender_groups)):
                 self.session.vars['gender_groups'].append([])
 
             males = []
-            m_pointer = 0
+            m_pointer = 0 # Points to the first male player
             females = []
-            f_pointer = 0
+            f_pointer = 0 # Points to the first female player
 
+            # Divide players by gender
             for player in self.get_players():
                 if player._gender == 'Male':
                     males.append(player)
                 if player._gender == 'Female':
                     females.append(player)
 
+            # Create each Group,by adding 2 males and two females one by one
+            # WHile also logging {player id : group id} in self.session.vars['gender_groups_ids']
             for i in range(int(num_gender_groups)):
                 self.session.vars['gender_groups'][i].append(males[m_pointer])
-                males[m_pointer]._gender_group_id = i
                 self.session.vars['gender_groups_ids'].update({males[m_pointer].id_in_group : i})
                 m_pointer += 1
                 self.session.vars['gender_groups'][i].append(males[m_pointer])
                 self.session.vars['gender_groups_ids'].update({males[m_pointer].id_in_group : i})
-                males[m_pointer]._gender_group_id = i
                 m_pointer += 1
                 self.session.vars['gender_groups'][i].append(females[f_pointer])
                 self.session.vars['gender_groups_ids'].update({females[f_pointer].id_in_group : i})
-                females[f_pointer]._gender_group_id = i
                 f_pointer += 1
                 self.session.vars['gender_groups'][i].append(females[f_pointer])
                 self.session.vars['gender_groups_ids'].update({females[f_pointer].id_in_group : i})
-                females[f_pointer]._gender_group_id = i
                 f_pointer += 1
-            print(self.session.vars['gender_groups_ids'])
 
-
+        # Set Numbers
         for player in self.get_players():
-            num_string = ""
-            for i in range(9):
-                num_string += str(random.randint(1, 9))
-            player._initial_number = int(num_string)
-            print(player.id_in_group, ": ", player._initial_number)
+            num_string = "123456789"
+            sr = ''.join(random.sample(num_string, len(num_string)))
+            player._initial_number = int(sr)
 
     @property
     def config(self):
@@ -136,28 +146,37 @@ class Group(RedwoodGroup):
     def stage(self):
         return parse_config(self.session.config['config_file'])[self.round_number-1]['stage']
     
+    '''
+    This function sets the payoffs for each player
+
+    Input: None
+    Output: None
+    '''
     def set_payoffs(self):
         events = list(self.events.filter(channel='number'))
         for p in self.get_players():
             p.set_correct_answers(events)
         if self.stage() == 2:
             for g in self.session.vars['gender_groups']:
-                print(g)
+                # Sort each group by most correct answers
                 g.sort(key=lambda x: self.get_player_by_id(x.id_in_group).correct_answers(), reverse=True)
-                for p in g:
-                    print(p)
-                    print(p.id_in_group, " correct answers: ", self.get_player_by_id(p.id_in_group).correct_answers())
         for p in self.get_players():
             p.set_payoff()
 
+    '''
+    This function receives data from the player-side.
+    It just returns a new random number to the player.
+
+    Input: event, the data sent by player
+    Output: None
+    '''
     def _on_number_event(self, event=None, **kwargs):
         print(event.value)
         id = event.value['id']
         player = self.get_player_by_id(int(id))
 
-        num_string = ""
-        for i in range(9):
-            num_string += str(random.randint(1, 9))
+        num_string = "123456789"
+        sr = ''.join(random.sample(num_string, len(num_string)))
         event.value['number'] = int(num_string)
         event.value['channel'] = 'outgoing'
 
@@ -171,7 +190,6 @@ class Player(BasePlayer):
     silo_num = models.IntegerField()
     _initial_number = models.IntegerField()
     _correct_answers = models.IntegerField(initial=0)
-    _gender_group_id = models.IntegerField()
 
     _gender =  models.StringField(
         choices=[
@@ -181,6 +199,8 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect,
         label='Question: What is your gender?'
     )
+
+    # This is the player's payment choice for the last stage
     _choice =  models.IntegerField(
         choices=[
             1,
@@ -199,18 +219,33 @@ class Player(BasePlayer):
     def correct_answers(self):
         return self._correct_answers
 
+    '''
+    This function counts the amount of correct answers for the player
+
+    Input: events (a list of data sent to the server)
+    Output: None
+    '''
     def set_correct_answers(self, events):
         correct_answers = 0
         for event in events:
             if event.value['id'] == self.id_in_group and event.value['channel'] == 'incoming':
                 correct_answers += 1
         self._correct_answers = correct_answers
+    
+    '''
+    If stage 0 or 1: Payoff = # of correct answers * 1500
+    If stage 2: If most answers in group: # of correct answers * 6000
+                Else: 0
+    If Stage 3: If choice 1: # of correct answers * 1500
+                If choice 2: If most answers in group: # of correct answers * 6000
+                              Else: 0
 
+    Input: None
+    Output: None
+    '''
     def set_payoff(self):
         print("set_payoff: ", self._correct_answers)
-        if self.group.stage() == 0:
-            self.payoff = self._correct_answers * 1500
-        elif self.group.stage() == 1:
+        if self.group.stage() == 0 or self.group.stage() == 1:
             self.payoff = self._correct_answers * 1500
         elif self.group.stage() == 2:
             group = self.session.vars['gender_groups'][self.session.vars['gender_groups_ids'][self.id_in_group]]
@@ -223,6 +258,7 @@ class Player(BasePlayer):
         elif self.group.stage() == 3 and self._choice == 2:
             group = self.session.vars['gender_groups'][self.session.vars['gender_groups_ids'][self.id_in_group]]
             
+            # Replace the player's own score from stage 2 with their score from stage 3 and re-sorts the group
             newGroup = [(p.id_in_group , p.in_round(3)._correct_answers) for p in group if p.id_in_group is not self.id_in_group]
             newGroup.append((self.id_in_group , self._correct_answers))
             newGroup.sort(key=lambda x: x[1], reverse=True)

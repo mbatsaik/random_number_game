@@ -94,6 +94,14 @@ export class RandomNumber extends PolymerElement {
         console.log(this.randomNumber);
     }
 
+    /*
+    This function checks the user input.
+    If it is not matching the random number, do nothing.
+    If it is, send it to the server
+
+    Input: None
+    Output: None
+    */
     _confirm(){
         if(parseInt(this.shadowRoot.querySelector('#number').value) != this.randomNumber){
             return;
@@ -107,11 +115,23 @@ export class RandomNumber extends PolymerElement {
         this.$.channel.send(request);
     }
 
+    /*
+    This function gets the new random number from the server and sets it on the UI
+
+    Input: Data from server
+    Output:None
+    */
     _handleNumberEvent(event){
         let numberResponse = event.detail.payload;
         if (numberResponse['id'] == parseInt(this.$.constants.idInGroup)) this.set("randomNumber", numberResponse['number']);
     }
 
+    /*
+    This function checks if the current round is the practice round.
+
+    Input: None
+    Output: If this is the first round
+    */
     _practice(){
         return parseInt(this.roundNumber) != 1;
     }
