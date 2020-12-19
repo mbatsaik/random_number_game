@@ -47,13 +47,6 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
 
-    def num_rounds(self):
-        """
-        Defines the number of rounds of a session. In this case, 
-        it uses a config file for this task
-        """
-        return len(parse_config(self.session.config['config_file']))
-
     def creating_session(self):
         config = self.config
 
@@ -96,36 +89,9 @@ class Group(BaseGroup):
    
     stage = models.IntegerField()
     
-    def set_payoffs(self):
-        #TODO: fix payoff function so that it uses set_payoff of player
-        events = list(self.events.filter(channel='number'))
-        for p in self.get_players():
-            p.set_correct_answers(events)
-        if self.stage() == 2:
-            for g in self.session.vars['gender_groups']:
-                print(g)
-                g.sort(key=lambda x: self.get_player_by_id(x.id_in_group).correct_answers(), reverse=True)
-                for p in g:
-                    print(p)
-                    print(p.id_in_group, " correct answers: ", self.get_player_by_id(p.id_in_group).correct_answers())
+    def set_group_payoffs(self):
         for p in self.get_players():
             p.set_payoff()
-
-    # def _on_number_event(self, event=None, **kwargs):
-    #     print(event.value)
-    #     id = event.value['id']
-    #     player = self.get_player_by_id(int(id))
-
-    #     num_string = ""
-    #     for i in range(9):
-    #         num_string += str(random.randint(1, 9))
-    #     event.value['number'] = int(num_string)
-    #     event.value['channel'] = 'outgoing'
-
-    #     # broadcast the updated data out to all subjects
-    #     self.send('number', event.value)
-    #     self.save()
-
 
 
 class Player(BasePlayer):

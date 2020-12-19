@@ -57,25 +57,6 @@ class GenderPage(Page):
     def is_displayed(self):
         return self.round_number == 1
 
-    def before_next_page(self):
-        #TODO: look for another page that appears multiple times to create the images
-        # creating the number images and storing their commands to display on page
-        for player in self.group.get_players():
-            player.task_number = self.player.task_number_method()
-            self.round_number
-            # name of random number image file
-            task_number_file = "random_number_game/" + \
-                               f"{player.task_number}_player_{player.id_in_group}_{self.round_number}"
-            # creating the img file
-            writeText(player.task_number, f'random_number_game/static/{task_number_file}.png')
-
-            # storing the command to display the image per player
-            player.task_number_img = '<img src="{% static "' + f'{task_number_file}.png' + '" %}"/>'
-
-        # timeout for multiple pages that restarts at the beginning of first stage
-        #TODO: look for another page to reset the expiry time per beginning of stage
-        self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
-
 
 class ChoicePage(Page):   
     form_model = 'player'
@@ -94,6 +75,7 @@ class Stage2WaitPage(WaitPage):
     body_text = 'Waiting for all players to be ready'
     wait_for_all_groups = True
     after_all_players_arrive = 'group_assignment' # players will be assigned into groups of 2 men and 2 women
+    #TODO: code group_assignment method 
     #TODO: the group_assignment method requires some commands to keep the grouping as this round for the rest of rounds
 
     def is_displayed(self):
@@ -102,8 +84,27 @@ class Stage2WaitPage(WaitPage):
 
 class ProcessingPage(Page):
     timeout_seconds = 0.5 #TODO: test if non-integer timeouts work
-
     #TODO: complete page for processing the image for the transcription task
+
+    def before_next_page(self):
+        # creating the number images and storing their commands to display on page
+        for player in self.group.get_players():
+            player.task_number = self.player.task_number_method()
+            self.round_number
+            # name of random number image file
+            task_number_file = "random_number_game/" + \
+                               f"{player.task_number}_player_{player.id_in_group}_{self.round_number}"
+            # creating the img file
+            writeText(player.task_number, f'random_number_game/static/{task_number_file}.png')
+
+            # storing the command to display the image per player
+            player.task_number_img = '<img src="{% static "' + f'{task_number_file}.png' + '" %}"/>'
+
+        # timeout for multiple pages that restarts at beginning of each stage
+        if self.round_number == 1 or self.round_number == round(Constants.num_rounds/3) + 1 \
+           or self.round_number == round(2*Constants.num_rounds/3) + 1:
+           self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
+    
 
 class Decision(Page):
     form_model = "player"
@@ -122,7 +123,7 @@ class Decision(Page):
 
 class ResultsWaitPage(WaitPage):
     wait_for_all_groups = True
-    after_all_players_arrive = 'set_payoffs'
+    after_all_players_arrive = 'set_group_payoffs'
 
     def is_displayed(self):
         return self.round_number == round(Constants.num_rounds/3) or \
