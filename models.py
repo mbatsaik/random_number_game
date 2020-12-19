@@ -25,10 +25,6 @@ class Constants(BaseConstants):
 
 class Subsession(BaseSubsession):
 
-    def creating_session(self):
-        players = self.get_players()
-        num_players = len(players)
-        
     def group_assignment(self):
         """
         Sets the group matrix for stage 2
@@ -161,7 +157,8 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     silo_num = models.IntegerField()
     task_number = models.StringField()
-    task_number_img = models.StringField() # command for displaying task_number image file
+    task_number_path = models.StringField() # path for img
+    task_number_command = models.StringField() # command for displaying task_number image file
     transcription = models.StringField()
     answer_is_correct = models.IntegerField()
     _correct_answers = models.IntegerField(initial=0)
@@ -177,7 +174,7 @@ class Player(BasePlayer):
             'Female',
         ],
         widget=widgets.RadioSelect,
-        label='Question: What is your gender?'
+        label=''
     )
     _choice =  models.IntegerField(
         choices=[
@@ -226,6 +223,6 @@ class Player(BasePlayer):
 
         # turning the list into a string
         for num in one_to_nine:
-            initial_number += str(num)
+            random_number += str(num)
 
         return random_number
