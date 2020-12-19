@@ -26,20 +26,51 @@ class Constants(BaseConstants):
 class Subsession(BaseSubsession):
 
     def creating_session(self):
-
         players = self.get_players()
         num_players = len(players)
         
-        #TODO: define group assignation function (take the following code as basis)
-        # defining a matrix with players per group
-        group_matrix = []
-        for silo in silos:
-            silo_matrix = []
-            for i in range(0, len(silo), num_players):
-                silo_matrix.append(silo[i:i+num_players])
-            group_matrix.extend(otree.common._group_randomly(silo_matrix, fixed_id_in_group))
-        self.set_group_matrix(group_matrix) # setting up the matrix in otree
-    
+    def group_assignment(self):
+        """
+        Sets the group matrix for stage 2
+
+        Input: None
+        Output: None
+        """
+        #TODO: code method
+
+        if self.round_number == round(Constants.num_rounds/3) + 1:
+            group_matrix = self.get_group_matrix()
+            female_players = [] # list of male player ids
+            male_players = [] # list of female player ids
+            new_id_matrix = [] # list of lists for ids of new group members
+            print(f"DEBUG: Group matrix = {group_matrix}")
+            for group in group_matrix:
+                for player in group:
+                    if player._gender == 'Male':
+                        male_players.append(player.id_in_group)
+                    elif player._gender == 'Female':
+                        female_players.append(player.id_in_group)
+                    else:
+                        print(f"DEBUG: Invalid player gender = {player._gender}")
+            
+            # randomizing the order of the (fe)male players
+            random.SystemRandom().shuffle(female_players)
+            random.SystemRandom().shuffle(male_players)
+
+            # setting up the new group matrix
+            for group_number in range(1, round(len(male_players)/Constants.players_per_group)):
+                initial_index = (group_number-1)*2
+                final_index = (group_number)*2
+                print(f"DEBUG: current indexes = ({initial_index}, {final_index})")
+                new_id_matrix.append(male_players[initial_index:final_index] + \
+                                    female_players[initial_index:final_index])
+                print(f"DEBUG: new_id_matrix = {new_id_matrix}")
+            self.set_group_matrix(group_matrix) 
+        
+        # keeping the same grouping for the rest of rounds
+        for subsession in self.in_rounds(round(Constants.num_rounds/3)+2, Constants.num_rounds):
+            subsession.group_like_round(round(Constants.num_rounds/3)+1)
+
     def set_payoffs_per_group(self):
         """
         Sets the payoff for the participants in each group
@@ -55,8 +86,15 @@ class Group(BaseGroup):
    
     stage = models.IntegerField()
     best_score_stage_2 = models.IntegerField() # highest number of correct answers per group in S2
-    
+
     def set_group_payoffs(self):
+        """
+        Sets the payoffs for each player in a group
+
+        Input: None
+        Output: None
+        """
+
         if self.stage == 1:
             for player_in_group in self.get_players():
                 player_in_group.payoff_stage_1 = player_in_group._correct_answers * 1500
