@@ -84,10 +84,10 @@ class Stage2WaitPage(WaitPage):
 
 class ProcessingPage(Page):
     timeout_seconds = 0.5 #TODO: test if non-integer timeouts work
-    #TODO: complete page for processing the image for the transcription task
 
     def before_next_page(self):
         # creating the number images and storing their commands to display on page
+        #TODO: erase images after being displayed
         for player in self.group.get_players():
             player.task_number = self.player.task_number_method()
             self.round_number
@@ -103,14 +103,27 @@ class ProcessingPage(Page):
         # timeout for multiple pages that restarts at beginning of each stage
         if self.round_number == 1 or self.round_number == round(Constants.num_rounds/3) + 1 \
            or self.round_number == round(2*Constants.num_rounds/3) + 1:
-           self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
+
+            # assigning stage
+            if self.round_number >= 1 and self.round_number <= round(Constants.num_rounds/3):
+                self.group.stage == 1
+            
+            elif self.round_number > round(Constants.num_rounds/3) and \
+                self.round_number <= round(2*Constants.num_rounds/3):
+                self.group.stage == 2
+
+            else:
+                self.group.stage == 3
+
+            self.participant.vars[f'correct_answers_s{self.group.stage}'] = 0 # setting up the corr answ counter
+            self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
     
 
 class Decision(Page):
     form_model = "player"
     form_fields = ['transcription']
     
-    #TODO: code frontend page for decision
+    #TODO: code frontend page for decision (Alex)
     def get_timeout_seconds(self):
         return self.participant.vars['expiry_time'] - time() # updating the time each time the page is displayed
 
@@ -129,13 +142,13 @@ class ResultsWaitPage(WaitPage):
         return self.round_number == round(Constants.num_rounds/3) or \
                self.round_number == round(2*Constants.num_rounds/3)
 
-    #TODO: add after all players arrive method for setting every player's payoff
-
 
 class Results(Page):
 
     def is_displayed(self):
-        return self.subsession.config is not None
+        return self.round_number == round(Constants.num_rounds/3) or \
+               self.round_number == round(2*Constants.num_rounds/3) or \
+               self.round_number == Constants.num_rounds    
 
     def vars_for_template(self):
         return{
@@ -149,9 +162,9 @@ class Payment(Page):
         return self.round_number == self.subsession.num_rounds()
     
     def vars_for_template(self):
-        payoff_1 = self.player.in_round(2).payoff
-        payoff_2 = self.player.in_round(3).payoff
-        payoff_3 = self.player.in_round(4).payoff
+        payoff_1 = self.player.in_round(round(Constants.num_rounds/3)).payoff_stage_1
+        payoff_2 = self.player.in_round(round(2*Constants.num_rounds/3)).payoff_stage_2
+        payoff_3 = self.player.in_round(Constants.num_rounds).payoff_stage_3
 
         return {
             'payoff_1': payoff_1,
