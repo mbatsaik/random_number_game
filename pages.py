@@ -92,24 +92,24 @@ class ProcessingPage(Page):
         # creating the img file
         writeText(player.task_number, f'random_number_game/static/{player.task_number_path}.png')
 
+        # assigning stage
+        print("DEBUG: executing stage assignment")
+        if self.round_number >= 1 and self.round_number <= round(Constants.num_rounds/3):
+            print("DEBUG: executing stage 1 assignment")
+            self.group.stage = 1
+        
+        elif self.round_number > round(Constants.num_rounds/3) and \
+            self.round_number <= round(2*Constants.num_rounds/3):
+            print("DEBUG: executing stage 2 assignment")
+            self.group.stage = 2
+
+        else:
+            print("DEBUG: executing stage 3 assignment")
+            self.group.stage = 3
+
         # timeout for multiple pages that restarts at beginning of each stage
         if self.round_number == 1 or self.round_number == round(Constants.num_rounds/3) + 1 \
            or self.round_number == round(2*Constants.num_rounds/3) + 1:
-
-            print("DEBUG: executing stage assignment")
-            # assigning stage
-            if self.round_number >= 1 and self.round_number <= round(Constants.num_rounds/3):
-                print("DEBUG: executing stage 1 assignment")
-                self.group.stage = 1
-            
-            elif self.round_number > round(Constants.num_rounds/3) and \
-                self.round_number <= round(2*Constants.num_rounds/3):
-                print("DEBUG: executing stage 2 assignment")
-                self.group.stage = 2
-
-            else:
-                print("DEBUG: executing stage 3 assignment")
-                self.group.stage = 3
 
             print(f"DEBUG: correct_answers_s{self.group.stage}")
             self.participant.vars[f'correct_answers_s{self.group.stage}'] = 0 # setting up the corr answ counter
@@ -162,13 +162,24 @@ class Decision(Page):
         return {"image_path": self.player.task_number_path + ".png",
                 "time_expired": time_expired}
 
+
 class ResultsWaitPage(WaitPage):
     wait_for_all_groups = True
     after_all_players_arrive = 'set_payoffs_per_group'
 
     def is_displayed(self):
         return self.round_number == round(Constants.num_rounds/3) or \
-               self.round_number == round(2*Constants.num_rounds/3)
+               self.round_number == round(2*Constants.num_rounds/3) 
+
+
+class FinalProcessingPage(Page):
+    timeout_seconds = 0.5
+
+    def before_next_page(self):
+        self.player.set_final_payoff()
+
+    def is_displayed(self):
+        return self.round_number == Constants.num_rounds
 
 
 class Results(Page):
@@ -208,6 +219,7 @@ page_sequence = [
     ProcessingPage,
     Decision,
     ResultsWaitPage,
+    FinalProcessingPage,
     Results,
     Payment
 ]
