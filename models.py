@@ -42,9 +42,9 @@ class Subsession(BaseSubsession):
             print(f"DEBUG: Group matrix = {group_matrix}")
             for group in group_matrix:
                 for player in group:
-                    if player._gender == 'Male':
+                    if player.in_round(1)._gender == 'Male':
                         male_players.append(player.id_in_group)
-                    elif player._gender == 'Female':
+                    elif player.in_round(1)._gender == 'Female':
                         female_players.append(player.id_in_group)
                     else:
                         print(f"DEBUG: Invalid player gender = {player._gender}")
@@ -83,7 +83,7 @@ class Group(BaseGroup):
     stage = models.IntegerField()
     best_score_stage_2 = models.IntegerField() # highest number of correct answers per group in S2
 
-    def set_group_payoffs(self):
+    def set_payoffs(self):
         """
         Sets the payoffs for each player in a group
 
@@ -194,18 +194,27 @@ class Player(BasePlayer):
         Input: transcripted number (integer)
         Output: None
         """
+        # determining if answer is correct
         if transcription == self.task_number:
             self.answer_is_correct = 1
-            if self.round_number <= round(Constants.num_rounds/3):
-                self.participant.vars['correct_answers_s1'] += 1  
-                self._correct_answers = self.participant.vars['correct_answers_s1']
-            elif self.round_number > round(Constants.num_rounds/3) and \
-                self.round_number <= round(2*Constants.num_rounds/3):
-                self.participant.vars['correct_answers_s2'] += 1  
-                self._correct_answers = self.participant.vars['correct_answers_s2']
-            else:
-                self.participant.vars['correct_answers_s3'] += 1  
-                self._correct_answers = self.participant.vars['correct_answers_s3']
+        else:
+            self.answer_is_correct = 0
+
+        # storing the number of correct answers
+        print(f"DEBUG: current round = {self.round_number}")
+        if self.round_number <= round(Constants.num_rounds/3):
+            print(f"DEBUG: correct answers s1 = {self.participant.vars['correct_answers_s1']}")
+            print(f"DEBUG: answer is correct = {self.answer_is_correct}")
+            self.participant.vars['correct_answers_s1'] += self.answer_is_correct  
+            self._correct_answers = self.participant.vars['correct_answers_s1']
+            print(f"DEBUG: correct answers s1 += = {self.participant.vars['correct_answers_s1']}")
+        elif self.round_number > round(Constants.num_rounds/3) and \
+            self.round_number <= round(2*Constants.num_rounds/3):
+            self.participant.vars['correct_answers_s2'] += self.answer_is_correct  
+            self._correct_answers = self.participant.vars['correct_answers_s2']
+        else:
+            self.participant.vars['correct_answers_s3'] += self.answer_is_correct
+            self._correct_answers = self.participant.vars['correct_answers_s3']
 
     def task_number_method(self):
         """

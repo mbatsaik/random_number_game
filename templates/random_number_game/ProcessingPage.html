@@ -1,9 +1,22 @@
 {% extends "global/Page.html" %}
 {% load staticfiles otree_tags %}
 
-{% block title %}
-Processing the Task    
+{% block app_styles %}
+<style>
+    .otree-timer {
+        display: none;
+    }
+</style>
 {% endblock %}
+
+{% block title %}
+    {% if remaining_time > 0 %}
+        Processing task
+    {% else %}
+        Processing results
+    {% endif %}
+{% endblock %}
+
 
 {% block content %}
 

@@ -96,44 +96,75 @@ class ProcessingPage(Page):
         if self.round_number == 1 or self.round_number == round(Constants.num_rounds/3) + 1 \
            or self.round_number == round(2*Constants.num_rounds/3) + 1:
 
+            print("DEBUG: executing stage assignment")
             # assigning stage
             if self.round_number >= 1 and self.round_number <= round(Constants.num_rounds/3):
-                self.group.stage == 1
+                print("DEBUG: executing stage 1 assignment")
+                self.group.stage = 1
             
             elif self.round_number > round(Constants.num_rounds/3) and \
                 self.round_number <= round(2*Constants.num_rounds/3):
-                self.group.stage == 2
+                print("DEBUG: executing stage 2 assignment")
+                self.group.stage = 2
 
             else:
-                self.group.stage == 3
+                print("DEBUG: executing stage 3 assignment")
+                self.group.stage = 3
 
+            print(f"DEBUG: correct_answers_s{self.group.stage}")
             self.participant.vars[f'correct_answers_s{self.group.stage}'] = 0 # setting up the corr answ counter
-            self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
-    
+            # self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
+            self.participant.vars['expiry_time'] = time() + 15 # debugging timeout
+
+        # erasing file if no time remaining
+        #TODO: look for a ram efficient way to create and erase images
+        if self.round_number > 1:
+            remaining_time = self.participant.vars['expiry_time'] - time()
+            if remaining_time <= 0:
+                file_to_erase = "random_number_game/static/" + self.player.task_number_path + ".png"
+                print(f"DEBUG: file_to_erase = {file_to_erase}")
+                remove(file_to_erase)
+
+                # updating the correct answers when no remaining time
+                self.player.set_correct_answer(self.player.transcription)
+
+
+    def vars_for_template(self):
+        if self.round_number > 1:
+            remaining_time = self.participant.vars['expiry_time'] - time()
+        else:
+            remaining_time = 10 # arbitrary value in order to make this code run
+        return {"remaining_time": remaining_time}
 
 class Decision(Page):
     form_model = "player"
     form_fields = ['transcription']
 
     #TODO: add conditional in front-end to avoid displaying stuff
-
     def get_timeout_seconds(self):
         return self.participant.vars['expiry_time'] - time() # updating the time each time the page is displayed
 
     def is_displayed(self):
-        return self.participant.vars['expiry_time'] != 0 # display only if there is time left
+        remaining_time = self.participant.vars['expiry_time'] - time()
+        print(f"DEBUG: remaining time = {remaining_time}")
+        return remaining_time > 0 # display only if there is time left
 
     def before_next_page(self):
+        # erasing file if still time on the clock, but round task finished
         file_to_erase = "random_number_game/static/" + self.player.task_number_path + ".png"
+        print(f"DEBUG: file_to_erase = {file_to_erase}")
         remove(file_to_erase)
         self.player.set_correct_answer(self.player.transcription) # checking if the answer was correct
 
     def vars_for_template(self):
-        return {"image_path": self.player.task_number_path + ".png"}
+        time_expired = (self.participant.vars['expiry_time'] - time() <= 0)
+        print(f"DEBUG: time_expired = {time_expired}")
+        return {"image_path": self.player.task_number_path + ".png",
+                "time_expired": time_expired}
 
 class ResultsWaitPage(WaitPage):
     wait_for_all_groups = True
-    after_all_players_arrive = 'set_group_payoffs'
+    after_all_players_arrive = 'set_payoffs_per_group'
 
     def is_displayed(self):
         return self.round_number == round(Constants.num_rounds/3) or \
@@ -149,7 +180,7 @@ class Results(Page):
 
     def vars_for_template(self):
         return{
-            'correct_answers': self.player.correct_answers()
+            'correct_answers': self.player._correct_answers
         }
         
 
