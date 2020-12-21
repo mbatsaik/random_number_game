@@ -193,6 +193,40 @@ class Player(BasePlayer):
         label='Question: What payment treatment?'
     ) # 1 is Stage 1 and 2 is Stage 2
 
+    #Survey Fields
+    # Gender is already recorded
+    _age =  models.IntegerField(
+        label='What is your age?'
+    )
+    # Birth Place
+    _birth_place = models.StringField(
+        label='What is your birth place?'
+    )
+    #3. School Name (I have a list of schools and other option in Mongolian)
+    _school = models.StringField(
+        label='What is your school?'
+    )
+    #4. Year of School (1-6, other=type)
+    _year_of_school = models.IntegerField(
+        label='What is your school year?'
+    )
+    #5 . Field of Study (I have a list of majors and other option to type)
+    _major = models.StringField(
+        label='What is your field of study?'
+    )
+    #6. How many brothers do you have?
+    _brothers = models.IntegerField(
+        label='How many brothers do you have?'
+    )
+    #7 . How many sisters do you have?
+    _sisters = models.IntegerField(
+        label='How many sisters do you have?'
+    )
+    #8. Explain briefly the reason behind your choice in Stage 3 (short answer)
+    _stage_3_reasoning =  models.StringField(
+        label='Explain briefly the reason behind your choice in Stage 3 (short answer)'
+    )
+
     def set_correct_answer(self, transcription):
         """
         Verifies that the number inputted is correct and adds 
