@@ -62,7 +62,8 @@ class ChoicePage(Page):
     form_fields = ['_choice']
 
     def is_displayed(self):
-        return self.round_number == round(2*Constants.num_rounds/3) + 1 # displays on beginning of third stage
+        return self.round_number == round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice + 1 # displays on beginning of third stage
 
 
 class Stage2WaitPage(WaitPage):
@@ -76,7 +77,8 @@ class Stage2WaitPage(WaitPage):
     after_all_players_arrive = 'group_assignment' # players will be assigned into groups of 2 men and 2 women
 
     def is_displayed(self):
-        return self.round_number == round(Constants.num_rounds/3) + 1 # displays on beginning of second stage
+        return self.round_number == round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice + 1 # displays on beginning of second stage
 
 
 class ProcessingPage(Page):
@@ -95,12 +97,22 @@ class ProcessingPage(Page):
 
         # assigning stage
         print("DEBUG: executing stage assignment")
-        if self.round_number >= 1 and self.round_number <= round(Constants.num_rounds/3):
+        if self.round_number >= 1 and self.round_number <= Constants.num_rounds_practice:
+            print("DEBUG: executing practice stage assignment")
+            self.group.stage = 0
+
+        elif self.round_number >= 1 + Constants.num_rounds_practice and \
+            self.round_number <= round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+                + Constants.num_rounds_practice:
+            
             print("DEBUG: executing stage 1 assignment")
             self.group.stage = 1
         
-        elif self.round_number > round(Constants.num_rounds/3) and \
-            self.round_number <= round(2*Constants.num_rounds/3):
+        elif self.round_number > round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice and \
+            self.round_number <= round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice:
+            
             print("DEBUG: executing stage 2 assignment")
             self.group.stage = 2
 
@@ -108,14 +120,22 @@ class ProcessingPage(Page):
             print("DEBUG: executing stage 3 assignment")
             self.group.stage = 3
 
-        # timeout for multiple pages that restarts at beginning of each stage
-        if self.round_number == 1 or self.round_number == round(Constants.num_rounds/3) + 1 \
-           or self.round_number == round(2*Constants.num_rounds/3) + 1:
+        # timeout for multiple pages that restarts at beginning of practice stage
+        if self.round_number == 1:
+            print("DEBUG: correct_answers practice stage")
+            self.participant.vars[f'correct_answers_s{self.group.stage}'] = 0 # setting up the corr answ counter
+            self.participant.vars['expiry_time'] = time() + Constants.timeout_practice
+
+        # timeout for multiple pages that restarts at beginning of each real stage
+        elif self.round_number == 1 + Constants.num_rounds_practice or \
+           self.round_number == round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+           + Constants.num_rounds_practice + 1 \
+           or self.round_number == round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice + 1:
 
             print(f"DEBUG: correct_answers_s{self.group.stage}")
             self.participant.vars[f'correct_answers_s{self.group.stage}'] = 0 # setting up the corr answ counter
-            # self.participant.vars['expiry_time'] = time() + 3*60 # timeout of 3 minutes
-            self.participant.vars['expiry_time'] = time() + 15 # debugging timeout
+            self.participant.vars['expiry_time'] = time() + Constants.timeout_stage
 
         # erasing file if no time remaining
         #TODO: look for a ram efficient way to create and erase images
@@ -129,7 +149,6 @@ class ProcessingPage(Page):
                 # updating the correct answers when no remaining time
                 self.player.set_correct_answer(self.player.transcription)
 
-
     def vars_for_template(self):
         if self.round_number > 1:
             remaining_time = self.participant.vars['expiry_time'] - time()
@@ -137,11 +156,11 @@ class ProcessingPage(Page):
             remaining_time = 10 # arbitrary value in order to make this code run
         return {"remaining_time": remaining_time}
 
+
 class Decision(Page):
     form_model = "player"
     form_fields = ['transcription']
 
-    #TODO: add conditional in front-end to avoid displaying stuff
     def get_timeout_seconds(self):
         return self.participant.vars['expiry_time'] - time() # updating the time each time the page is displayed
 
@@ -165,12 +184,15 @@ class Decision(Page):
 
 
 class ResultsWaitPage(WaitPage):
-    wait_for_all_groups = True
-    after_all_players_arrive = 'set_payoffs_per_group'
+    
+    def after_all_players_arrive(self):
+        self.group.set_payoffs()
 
     def is_displayed(self):
-        return self.round_number == round(Constants.num_rounds/3) or \
-               self.round_number == round(2*Constants.num_rounds/3) 
+        return self.round_number == round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice or \
+               self.round_number == round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice 
 
 
 class FinalProcessingPage(Page):
@@ -186,8 +208,11 @@ class FinalProcessingPage(Page):
 class Results(Page):
 
     def is_displayed(self):
-        return self.round_number == round(Constants.num_rounds/3) or \
-               self.round_number == round(2*Constants.num_rounds/3) or \
+        return self.round_number == Constants.num_rounds_practice or \
+               self.round_number == round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice or \
+               self.round_number == round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice or \
                self.round_number == Constants.num_rounds    
 
     def vars_for_template(self):
@@ -202,8 +227,10 @@ class Payment(Page):
         return self.round_number == Constants.num_rounds
     
     def vars_for_template(self):
-        payoff_1 = self.player.in_round(round(Constants.num_rounds/3)).payoff_stage_1
-        payoff_2 = self.player.in_round(round(2*Constants.num_rounds/3)).payoff_stage_2
+        payoff_1 = self.player.in_round(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice).payoff_stage_1
+        payoff_2 = self.player.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice).payoff_stage_2
         payoff_3 = self.player.in_round(Constants.num_rounds).payoff_stage_3
 
         return {

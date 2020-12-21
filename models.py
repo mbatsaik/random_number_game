@@ -19,9 +19,14 @@ This is a Lines Queueing project
 class Constants(BaseConstants):
     name_in_url = 'random_number_game'
     players_per_group = 4
-    # num_rounds = 150 # 50 rounds per stage to make the respective page repeat itself 50 times 
-    num_rounds = 6 # DEBUG num_rounds
-    base_points = 0
+    # num_rounds = 152 # 50 rounds per stage to make the respective page repeat itself 50 times + 2 rounds of practice
+    num_rounds = 8 # DEBUG num_rounds (stage rounds + practice rounds)
+    num_rounds_practice = 2
+    timeout_practice = 20 # DEBUG timeout
+    # timeout_practice = 60
+    timeout_stage = 25 # DEBUG timeout
+    # timeout_stage = 3*60
+
 
 
 class Subsession(BaseSubsession):
@@ -33,9 +38,10 @@ class Subsession(BaseSubsession):
         Input: None
         Output: None
         """
-        #TODO: debug method
+        #TODO: FIX rounds
 
-        if self.round_number == round(Constants.num_rounds/3) + 1:
+        if self.round_number == round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice + 1:
             group_matrix = self.get_group_matrix()
             female_players = [] # list of male player ids
             male_players = [] # list of female player ids
@@ -70,19 +76,21 @@ class Subsession(BaseSubsession):
             print(f"DEBUG: new group matrix = {self.get_group_matrix()}") 
         
         # keeping the same grouping for the rest of rounds
-        for subsession in self.in_rounds(round(Constants.num_rounds/3)+2, Constants.num_rounds):
-            subsession.group_like_round(round(Constants.num_rounds/3)+1)
+        for subsession in self.in_rounds(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice + 2, Constants.num_rounds):
+            subsession.group_like_round(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice + 1)
 
-    def set_payoffs_per_group(self):
-        """
-        Sets the payoff for the participants in each group
+    # def set_payoffs_per_group(self):
+    #     """
+    #     Sets the payoff for the participants in each group
 
-        Input: None
-        Output: None
-        """
-        print("DEBUG: Executing set payoffs per group")
-        for group in self.get_groups():
-            group.set_payoffs()
+    #     Input: None
+    #     Output: None
+    #     """
+    #     print("DEBUG: Executing set payoffs per group")
+    #     for group in self.get_groups():
+    #         group.set_payoffs()
 
 
 class Group(BaseGroup):
@@ -111,23 +119,29 @@ class Group(BaseGroup):
             
             # evaluating who is the best player
             for player_in_group in self.get_players():
+                print(f"DEBUG: player correct answers = {player_in_group._correct_answers}")
                 if self.best_score_stage_2 <=  player_in_group._correct_answers:
                     best_player = player_in_group
                     self.best_score_stage_2 = best_player._correct_answers
+            print(f"DEBUG: best player = {best_player}")
+            print(f"DEBUG: best player correct answers = {best_player._correct_answers}")
             
             # evaluating if more than one player obtained the best score
             for player_in_group in self.get_players():
                 if self.best_score_stage_2 ==  player_in_group._correct_answers:
                     best_players.append(player_in_group.id_in_group)
-            
+            print(f"DEBUG: list of best players = {best_players}")
+
             # declaring who won if more than 1 obtained the best score
             if len(best_players) > 1:
                 random.SystemRandom().shuffle(best_players) # randomizing the order
                 for player_in_group in self.get_players():
                     if player_in_group.id_in_group == best_players[0]: # picking the winner at random
                         player_in_group.stage_2_winner = True
+                        player_in_group.payoff_stage_2 = player_in_group._correct_answers * 6000
                     else:
                         player_in_group.stage_2_winner = False
+                        player_in_group.payoff_stage_2 = 0
 
             # declaring who won if only 1 player got best score
             else:
@@ -196,14 +210,28 @@ class Player(BasePlayer):
 
         # storing the number of correct answers
         print(f"DEBUG: current round = {self.round_number}")
-        if self.round_number <= round(Constants.num_rounds/3):
+        if self.round_number >= 1 and self.round_number <= Constants.num_rounds_practice:
+            print(f"DEBUG: correct answers s0 = {self.participant.vars['correct_answers_s0']}")
+            print(f"DEBUG: answer is correct = {self.answer_is_correct}")
+            self.participant.vars['correct_answers_s0'] += self.answer_is_correct  
+            self._correct_answers = self.participant.vars['correct_answers_s0']
+            print(f"DEBUG: correct answers s0 += = {self.participant.vars['correct_answers_s0']}")
+
+        elif self.round_number >= 1 + Constants.num_rounds_practice and \
+            self.round_number <= round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice:
+            
             print(f"DEBUG: correct answers s1 = {self.participant.vars['correct_answers_s1']}")
             print(f"DEBUG: answer is correct = {self.answer_is_correct}")
             self.participant.vars['correct_answers_s1'] += self.answer_is_correct  
             self._correct_answers = self.participant.vars['correct_answers_s1']
             print(f"DEBUG: correct answers s1 += = {self.participant.vars['correct_answers_s1']}")
-        elif self.round_number > round(Constants.num_rounds/3) and \
-            self.round_number <= round(2*Constants.num_rounds/3):
+
+        elif self.round_number > round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice and \
+            self.round_number <= round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+            + Constants.num_rounds_practice:
+
             self.participant.vars['correct_answers_s2'] += self.answer_is_correct  
             self._correct_answers = self.participant.vars['correct_answers_s2']
         else:
@@ -237,24 +265,35 @@ class Player(BasePlayer):
         Input: None
         Output: None
         """
+        # for stage 3:
         # paying the player according to his stage system choice
         # if stage 1 chosen
         print(f"DEBUG: _choice = {self.in_round(round(2*Constants.num_rounds/3) + 1)._choice}")
-        if self.in_round(round(2*Constants.num_rounds/3) + 1)._choice == 1:
+        if self.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice + 1)._choice == 1:
             print("DEBUG: paying in stage 3 according to stage 1")
             self.payoff_stage_3 = self._correct_answers * 1500
         # if stage 2 chosen
-        elif self.in_round(round(2*Constants.num_rounds/3) + 1)._choice == 2: 
+        elif self.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice + 1)._choice == 2: 
             print("DEBUG: paying in stage 3 according to stage 2")
             if self.in_round(Constants.num_rounds)._correct_answers \
-                > self.in_round(round(2*Constants.num_rounds/3)).benchmark_stage_2:
+                > self.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+               + Constants.num_rounds_practice).benchmark_stage_2:
                 self.payoff_stage_3 = self._correct_answers * 6000
             else:
                 self.payoff_stage_3 = 0
 
         if self.round_number == Constants.num_rounds:
-            # adding all the stage payoffs to the player's final payoff
-            print(f"DEBUG: payoff stage 3 = {self.in_round(Constants.num_rounds).payoff_stage_3}")
-            self.payoff = self.in_round(round(Constants.num_rounds/3)).payoff_stage_1 + \
-                          self.in_round(round(2*Constants.num_rounds/3)).payoff_stage_2 + \
-                          self.in_round(Constants.num_rounds).payoff_stage_3
+            # choosing at random the player's final payoff from the stage payoffs
+            list_of_payoffs = [self.in_round(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+                               + Constants.num_rounds_practice).payoff_stage_1,
+                               self.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+                               + Constants.num_rounds_practice).payoff_stage_2,
+                               self.in_round(Constants.num_rounds).payoff_stage_3]
+            print(f"DEBUG: list of payoffs = {list_of_payoffs}")
+            random.SystemRandom().shuffle(list_of_payoffs)
+            print(f"DEBUG: list of payoffs shuffled = {list_of_payoffs}")
+            self.payoff = list_of_payoffs[0]
+            print(f"DEBUG: final payoff = {self.payoff}")
+                          

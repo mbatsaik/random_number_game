@@ -2,11 +2,19 @@
 {% load staticfiles otree_tags %}
 
 {% block title %}
-    Random Number Game
+    {% if group.stage != 0 %}
+        Random Number Game - Stage {{ group.stage }}
+    {% else %}
+        Random Number Game - Practice Stage
+    {% endif %}
 {% endblock %}
 
 {% block content %}
     <p>Number to be inputted:</p>
     <img src="{% static image_path %}" />
     {% formfield player.transcription %}
+
+    <p>
+    {% next_button %}
+    </p>
 {% endblock %}

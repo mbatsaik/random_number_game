@@ -2,15 +2,22 @@
 {% load staticfiles otree_tags %}
 
 {% block title %}
-    Results
+    Results - Stage {{ group.stage }}
 {% endblock %}
 
 {% block content %}
-    <!--<div>Payoff: {{player.payoff}}</div>-->
     <p>
         <div> Correct Answers: {{correct_answers}}</div>
         <div>Stage is over. Proceed to next stage </div>
     </p>
+
+    {% if group.stage != 0 %}
+    {% else %}
+    <p>
+        The practice stage is over. Stage 1 will start now
+    </p>
+    {% endif %}
+
     {% next_button %}
 
 {% endblock %}
