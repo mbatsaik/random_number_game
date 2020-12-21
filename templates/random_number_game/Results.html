@@ -3,15 +3,22 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans trimmed %}Results {% endblocktrans %}
+{% blocktrans trimmed %} Results - Stage {% endblocktrans %}{{ group.stage }} 
 {% endblock %}
 
 {% block content %}
-    <!--<div>Payoff: {{player.payoff}}</div>-->
     <p>
         <div> {% blocktrans trimmed %}Correct Answers: {% endblocktrans %}{{correct_answers}}</div>
         <div>{% blocktrans trimmed %}Stage is over. Proceed to next stage {% endblocktrans %}</div>
     </p>
+
+    {% if group.stage != 0 %}
+    {% else %}
+    <p>
+        {% blocktrans trimmed %}The practice stage is over. Stage 1 will start now {% endblocktrans %}
+    </p>
+    {% endif %}
+
     {% next_button %}
 
 {% endblock %}
