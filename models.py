@@ -38,7 +38,6 @@ class Subsession(BaseSubsession):
         Input: None
         Output: None
         """
-        #TODO: FIX rounds
 
         if self.round_number == round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
             + Constants.num_rounds_practice + 1:
@@ -81,16 +80,17 @@ class Subsession(BaseSubsession):
             subsession.group_like_round(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
             + Constants.num_rounds_practice + 1)
 
-    # def set_payoffs_per_group(self):
-    #     """
-    #     Sets the payoff for the participants in each group
-
-    #     Input: None
-    #     Output: None
-    #     """
-    #     print("DEBUG: Executing set payoffs per group")
-    #     for group in self.get_groups():
-    #         group.set_payoffs()
+    def creating_session(self):
+        print(f"DEBUG: Executing creating session for round {self.round_number}")
+        all_players = self.get_players()
+        print(f"DEBUG: List of all players = {all_players}")
+        for p in all_players:
+            print(f"DEBUG: Player's id in subsession = {p.id_in_subsession}")
+            if p.id_in_subsession <= round(len(all_players)/2):
+                p._gender = "Male"
+            else:
+                p._gender = "Female"
+            print(f"DEBUG: Player's gender = {p._gender}")
 
 
 class Group(BaseGroup):

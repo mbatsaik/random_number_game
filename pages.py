@@ -184,7 +184,7 @@ class Decision(Page):
 
 
 class ResultsWaitPage(WaitPage):
-    
+
     def after_all_players_arrive(self):
         self.group.set_payoffs()
 
@@ -247,7 +247,7 @@ class Payment(Page):
 
 page_sequence = [
     Introduction,
-    GenderPage,
+#    GenderPage,
     ChoicePage,
     Stage2WaitPage,
     ProcessingPage,
