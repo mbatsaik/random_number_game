@@ -87,8 +87,9 @@ class ProcessingPage(Page):
         player = self.player
         player.task_number = self.player.task_number_method()
         # name of random number image file
+        id_in_subsession = self.player.id_in_subsession
         player.task_number_path = "random_number_game/" + \
-                            f"task_number_player_{player.id_in_group}_{self.round_number}"
+                            f"task_number_player_{id_in_subsession}_{self.round_number}"
         # creating the img file
         writeText(player.task_number, f'random_number_game/static/{player.task_number_path}.png')
 

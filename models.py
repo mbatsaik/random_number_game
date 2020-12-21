@@ -44,25 +44,30 @@ class Subsession(BaseSubsession):
             for group in group_matrix:
                 for player in group:
                     if player.in_round(1)._gender == 'Male':
-                        male_players.append(player.id_in_group)
+                        male_players.append(player.id_in_subsession)
                     elif player.in_round(1)._gender == 'Female':
-                        female_players.append(player.id_in_group)
+                        female_players.append(player.id_in_subsession)
                     else:
                         print(f"DEBUG: Invalid player gender = {player._gender}")
             
             # randomizing the order of the (fe)male players
+            print(f"DEBUG: female_players = {female_players}")
+            print(f"DEBUG: male_players = {male_players}")
             random.SystemRandom().shuffle(female_players)
             random.SystemRandom().shuffle(male_players)
+            print(f"DEBUG: female_players shuffled = {female_players}")
+            print(f"DEBUG: male_players shuffled = {male_players}")
 
             # setting up the new group matrix
-            for group_number in range(1, round(len(male_players)/Constants.players_per_group)):
-                initial_index = (group_number-1)*2
-                final_index = (group_number)*2
+            for group_number in range(0, len(group_matrix)):
+                initial_index = (group_number)*2
+                final_index = (group_number+1)*2
                 print(f"DEBUG: current indexes = ({initial_index}, {final_index})")
                 new_id_matrix.append(male_players[initial_index:final_index] + \
                                     female_players[initial_index:final_index])
                 print(f"DEBUG: new_id_matrix = {new_id_matrix}")
-            self.set_group_matrix(group_matrix) 
+            self.set_group_matrix(new_id_matrix)
+            print(f"DEBUG: new group matrix = {self.get_group_matrix()}") 
         
         # keeping the same grouping for the rest of rounds
         for subsession in self.in_rounds(round(Constants.num_rounds/3)+2, Constants.num_rounds):
