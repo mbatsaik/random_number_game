@@ -1,18 +1,19 @@
 {% extends "global/Page.html" %}
 {% load otree static %}
+{% load i18n %}
 
 {% block title %}
-    Final Page
+{% blocktrans trimmed %}Final Page {% endblocktrans %}
 {% endblock %}
 
 {% block content %}
 
-<div>You've reached the end of the game. Your payoffs are below </div>
+<div>{% blocktrans trimmed %} You've reached the end of the game. Your payoffs are below {% endblocktrans %}</div>
 
 <table class="table" style="margin-top:20px; margin-bottom:10px">
     <th>
-        <td>Stages</td>
-        <td>Payoff</td>
+        <td>{% blocktrans trimmed %}Stages{% endblocktrans %}</td>
+        <td>{% blocktrans trimmed %}Payoff{% endblocktrans %}</td>
     </th>
         <tr>
             <td></td>

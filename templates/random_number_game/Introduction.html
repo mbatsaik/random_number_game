@@ -1,12 +1,14 @@
 {% extends "global/Page.html" %}
 {% load staticfiles otree_tags %}
+{% load i18n %}
 
 {% block title %}
-    Welcome
+{% blocktrans trimmed %}Welcome {% endblocktrans %}
 {% endblock %}
 
 {% block content %}
 <p>
+    {% blocktrans trimmed %}
 The instructions are simple, and if you follow them carefully, you can earn a considerable
 amount of money. All the money you earn is yours to keep, and will be paid to you, in cash,
 immediately after the study ends. You will be paid 13,000 MNT for participating and 15,000
@@ -14,8 +16,9 @@ MNT for completing the study. This study has three stages, and one of the three 
 randomly selected for you to earn additional money on top of the aforementioned 13,000 and
 15,000 MNT. Read carefully the instruction on how you can earn money and raise your hand if
 you have any questions.
+{% endblocktrans %}
 </p>
-<p>
+<p>{% blocktrans trimmed %}
 Stage 1: Piece-rate payment
 
 Your task in Stage 1 is to complete as many typing-exercises as possible. To be more precise, the
@@ -28,8 +31,9 @@ receive 1,500 MNT for each correct answer that you entered within the 3 minutes.
 is not reduced when you enter a wrong answer. Directly before the start of this stage you will be
 given one minute in order to familiarize yourselves with the screen: During this time, you can
 practice the typing exercise, which do not count for your earning. Afterwards, Stage 1 will begin.
+{% endblocktrans %}
 </p>
-<p>
+<p>{% blocktrans trimmed %}
 Stage 2: Tournament payment
 
 As in stage 1, you will again have 3 minutes time to type as many exercises as possible.
@@ -45,8 +49,9 @@ receives 6,000 MNT per correct answer each, while the other three members do not
 payment. In case of a tie, the ranking among the members with equal performances is determined
 randomly. You will not be informed about the outcome of the tournament until the end of the
 study.
+{% endblocktrans %}
 </p>
-<p>
+<p>{% blocktrans trimmed %}
 Stage 3: Choice between Piece rate payment and Tournament payment
 
 As in Stages 1 and 2, you will again have 3 minutes to type as many exercises as possible.
@@ -62,14 +67,15 @@ is higher than your Stage 3-performance, otherwise you receive no payment for th
 case of a tie, the ranking among the members with equal performances is again determined
 randomly. The group composition (with 2 men and 2 women) is as it was in Stage 2. If you
 choose the Tournament payment, you will not be informed about the outcome of the tournament
-until the end of the experiment</p>
+until the end of the experiment
+{% endblocktrans %}</p>
 <p>
-    Any questions?
+    {% blocktrans trimmed %}Any questions?{% endblocktrans %}
 </p>
 
 
 <p>
-If you finished reading, please press next.
+    {% blocktrans trimmed %}If you finished reading, please press next.{% endblocktrans %}
 </p>
 
     {% next_button %}

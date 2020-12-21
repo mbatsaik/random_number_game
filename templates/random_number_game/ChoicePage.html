@@ -1,12 +1,15 @@
 {% extends "global/Page.html" %}
 {% load otree %}
+{% load i18n %}
 
 {% block title %}
+{% blocktrans trimmed %} 
     What is your payment choice for stage 3?
+    {% endblocktrans %}
 {% endblock %}
 
 {% block content %}
-<p>
+<p>{% blocktrans trimmed %} 
     Stage 3: Choice between Piece rate payment and Tournament payment
     
     As in Stages 1 and 2, you will again have 3 minutes to type as many exercises as possible.
@@ -22,10 +25,10 @@
     case of a tie, the ranking among the members with equal performances is again determined
     randomly. The group composition (with 2 men and 2 women) is as it was in Stage 2. If you
     choose the Tournament payment, you will not be informed about the outcome of the tournament
-    until the end of the experiment
+    until the end of the experiment {% endblocktrans %}
 </p>
 
-    Please enter your choice.
+{% blocktrans trimmed %} Please enter your choice.{% endblocktrans %}
 
     {% formfields %}
 
