@@ -5,9 +5,12 @@ from .models import Constants
 from datetime import timedelta
 from operator import concat
 
+from django.utils.html import format_html
+
 from PIL import Image, ImageDraw, ImageFont
 from time import time
 from os import remove
+from base64 import b64encode
 
 def writeText(text, fileName):
     """"
@@ -179,7 +182,13 @@ class Decision(Page):
     def vars_for_template(self):
         time_expired = (self.participant.vars['expiry_time'] - time() <= 0)
         print(f"DEBUG: time_expired = {time_expired}")
-        return {"image_path": self.player.task_number_path + ".png",
+        
+        # encoding the image that will be displayed
+        with open("random_number_game/static/" + self.player.task_number_path + ".png", "rb") as image_file:
+            self.player.encoded_image = b64encode(image_file.read()).decode('utf-8')
+
+        # using a var for template to display the encoded image
+        return {"encoded_image": self.player.encoded_image,
                 "time_expired": time_expired}
 
 

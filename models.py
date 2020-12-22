@@ -19,8 +19,8 @@ This is a Lines Queueing project
 class Constants(BaseConstants):
     name_in_url = 'random_number_game'
     players_per_group = 4
-    # num_rounds = 152 # 50 rounds per stage to make the respective page repeat itself 50 times + 2 rounds of practice
-    num_rounds = 8 # DEBUG num_rounds (stage rounds + practice rounds)
+    num_rounds = 152 # 50 rounds per stage to make the respective page repeat itself 50 times + 2 rounds of practice
+    # num_rounds = 8 # DEBUG num_rounds (stage rounds + practice rounds)
     num_rounds_practice = 2
     timeout_practice = 20 # DEBUG timeout
     # timeout_practice = 60
@@ -165,6 +165,7 @@ class Player(BasePlayer):
     silo_num = models.IntegerField()
     task_number = models.StringField()
     task_number_path = models.StringField() # path for img
+    encoded_image = models.LongStringField() # image encoded in base64
     task_number_command = models.StringField() # command for displaying task_number image file
     transcription = models.StringField()
     answer_is_correct = models.IntegerField()
