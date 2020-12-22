@@ -164,7 +164,8 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     silo_num = models.IntegerField()
     task_number = models.StringField()
-    task_number_path = models.LongStringField() # path for img
+    task_number_path = models.StringField() # path for img
+    encoded_image = models.LongStringField() # image encoded in base64
     task_number_command = models.StringField() # command for displaying task_number image file
     transcription = models.StringField()
     answer_is_correct = models.IntegerField()

@@ -11,9 +11,8 @@
 
 {% block content %}
     <p>Number to be inputted:</p>
-    <img src="{% static image_path %}" />
+    <img src="data:image/png;base64,{{ encoded_image }}">
     {% formfield player.transcription %}
-
     <p>
     {% next_button %}
     </p>
