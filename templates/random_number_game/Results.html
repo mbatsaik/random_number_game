@@ -1,20 +1,21 @@
 {% extends "global/Page.html" %}
 {% load staticfiles otree_tags %}
+{% load i18n %}
 
 {% block title %}
-    Results - Stage {{ group.stage }}
+{% blocktrans trimmed %} Results - Stage {% endblocktrans %}{{ group.stage }} 
 {% endblock %}
 
 {% block content %}
     <p>
-        <div> Correct Answers: {{correct_answers}}</div>
-        <div>Stage is over. Proceed to next stage </div>
+        <div> {% blocktrans trimmed %}Correct Answers: {% endblocktrans %}{{correct_answers}}</div>
+        <div>{% blocktrans trimmed %}Stage is over. Proceed to next stage {% endblocktrans %}</div>
     </p>
 
     {% if group.stage != 0 %}
     {% else %}
     <p>
-        The practice stage is over. Stage 1 will start now
+        {% blocktrans trimmed %}The practice stage is over. Stage 1 will start now {% endblocktrans %}
     </p>
     {% endif %}
 
