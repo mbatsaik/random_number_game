@@ -32,15 +32,18 @@
         </tr>
 </table>
 <p>
-    Your total earnings are 28000 + {{ player.payoff }} = {{ payoff_plus_fee }} and your 
-    randomly selected stage is {{ payment_stage }}
+    {% blocktrans trimmed %}Your total earnings are 28000 {% endblocktrans %}+ {{ player.payoff }} = {{ payoff_plus_fee }} and your 
+    {% blocktrans trimmed %} randomly selected stage is {% endblocktrans %} {{ payment_stage }}
 </p>    
 
 {% if treatment == 0 %}
 {% else %}
     <p>
-        We will also donate {{ player.payoff }} , the equivalent amount of your performance 
+        {% blocktrans trimmed %}We will also donate {% endblocktrans %} {{ player.payoff }} , 
+        {% blocktrans trimmed %}
+        the equivalent amount of your performance 
         in the game, to the State Emergency Committee Covid-19 fund.
+        {% endblocktrans %}
     </p>
 {% endif %}
 
