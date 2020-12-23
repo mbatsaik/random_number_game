@@ -29,7 +29,14 @@ to type as many exercises as possible. You enter an answer by clicking the “Co
 When you enter an answer, you immediately find out on the screen whether or not you typed
 them correctly. If Stage 1 is the stage selected for payment (among Stages 1-3), then you will
 receive 1,500 MNT for each correct answer that you entered within the 3 minutes. Your payment
-is not reduced when you enter a wrong answer. Directly before the start of this stage you will be
+is not reduced when you enter a wrong answer.
+
+{% if treatment == 0 %}
+{% else %}
+We will also match the same amount of money you earn and donate it to the National Emergency 
+Commission for Covid-19 fund. This is thanks to your performance. 
+{% endif %}
+Directly before the start of this stage you will be
 given one minute in order to familiarize yourselves with the screen: During this time, you can
 practice the typing exercise, which do not count for your earning. Afterwards, Stage 1 will begin.
 {% endblocktrans %}
@@ -49,7 +56,15 @@ exercise in this stage in comparison with the other three participants in your g
 member who has entered the most correct answers is the winner of the tournament. The winner
 receives 6,000 MNT per correct answer each, while the other three members do not receive any
 payment. In case of a tie, the ranking among the members with equal performances is determined
-randomly. You will not be informed about the outcome of the tournament until the end of the
+randomly. 
+
+{% if treatment == 0 %}
+{% else %}
+We will also match the same amount of money you earn and donate it to the National Emergency 
+Commission for Covid-19 fund. If you earn zero, then nothing will be donated thanks to your performance. 
+{% endif %}
+
+You will not be informed about the outcome of the tournament until the end of the
 study.
 {% endblocktrans %}
 </p>
@@ -68,8 +83,13 @@ all three of your group members did in Stage 2, then you will receive 6,000MNT p
 answer. In other words, no group member of your group can have a Stage 2-performance which
 is higher than your Stage 3-performance, otherwise you receive no payment for this stage. In
 case of a tie, the ranking among the members with equal performances is again determined
-randomly. The group composition (with 2 men and 2 women) is as it was in Stage 2. If you
-choose the Tournament payment, you will not be informed about the outcome of the tournament
+randomly. The group composition (with 2 men and 2 women) is as it was in Stage 2. 
+{% if treatment == 0 %}
+{% else %}
+We will also match the same amount of money you earn and donate it to the National Emergency 
+Commission for Covid-19 fund. If you earn zero, then nothing will be donated thanks to your performance. 
+{% endif %}
+If you choose the Tournament payment, you will not be informed about the outcome of the tournament
 until the end of the experiment
 {% endblocktrans %}</p>
 <p>

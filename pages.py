@@ -51,6 +51,8 @@ class Introduction(Page):
     def is_displayed(self):
         return self.round_number == 1
 
+    def vars_for_template(self):
+        return {'treatment': self.session.config["treatment"]}
 
 class GenderPage(Page):
     form_model = 'player'
@@ -252,6 +254,9 @@ class Payment(Page):
             'payoff_1': payoff_1,
             'payoff_2': payoff_2,
             'payoff_3': payoff_3,
+            'payment_stage': self.player.payment_stage,
+            'payoff_plus_fee': self.participant.payoff_plus_participation_fee(),
+            'treatment': self.session.config["treatment"]
         }
 
 page_sequence = [

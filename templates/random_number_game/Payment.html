@@ -30,15 +30,21 @@
             <td>3</td>
             <td>{{ payoff_3 }}</td>
         </tr>
-        <tr>
-            <td></td>
-            <td>Total Payoff</td>
-            <td>28000 + {{ player.payoff }}</td>
-        </tr>
 </table>
 <p>
+    Your total earnings are 28000 + {{ player.payoff }} = {{ payoff_plus_fee }} and your 
+    randomly selected stage is {{ payment_stage }}
+</p>    
 
-</p>
+{% if treatment == 0 %}
+{% else %}
+    <p>
+        We will also donate {{ player.payoff }} , the equivalent amount of your performance 
+        in the game, to the State Emergency Committee Covid-19 fund.
+    </p>
+{% endif %}
+
+
 {% next_button %}
 
 {% endblock %}

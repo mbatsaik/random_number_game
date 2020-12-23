@@ -194,6 +194,8 @@ class Player(BasePlayer):
         label=_('Question: What payment treatment?')
     ) # 1 is Stage 1 and 2 is Stage 2
 
+    payment_stage = models.IntegerField()
+
     #Survey Fields
     # Gender is already recorded
     _age =  models.IntegerField(
@@ -321,14 +323,15 @@ class Player(BasePlayer):
 
         if self.round_number == Constants.num_rounds:
             # choosing at random the player's final payoff from the stage payoffs
-            list_of_payoffs = [self.in_round(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
-                               + Constants.num_rounds_practice).payoff_stage_1,
-                               self.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
-                               + Constants.num_rounds_practice).payoff_stage_2,
-                               self.in_round(Constants.num_rounds).payoff_stage_3]
+            list_of_payoffs = [[1, self.in_round(round((Constants.num_rounds - Constants.num_rounds_practice)/3) \
+                               + Constants.num_rounds_practice).payoff_stage_1],
+                               [2, self.in_round(round(2*(Constants.num_rounds - Constants.num_rounds_practice)/3) \
+                               + Constants.num_rounds_practice).payoff_stage_2],
+                               [3, self.in_round(Constants.num_rounds).payoff_stage_3]]
             print(f"DEBUG: list of payoffs = {list_of_payoffs}")
             random.SystemRandom().shuffle(list_of_payoffs)
             print(f"DEBUG: list of payoffs shuffled = {list_of_payoffs}")
-            self.payoff = list_of_payoffs[0]
+            self.payment_stage = list_of_payoffs[0][0]
+            self.payoff = list_of_payoffs[0][1]
             print(f"DEBUG: final payoff = {self.payoff}")
                           
