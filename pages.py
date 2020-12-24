@@ -161,6 +161,18 @@ class ProcessingPage(Page):
             remaining_time = 10 # arbitrary value in order to make this code run
         return {"remaining_time": remaining_time}
 
+    def is_displayed(self):
+        # avoid displaying the processing page if no remaining time
+        if self.round_number > 1:
+            remaining_time = self.participant.vars['expiry_time'] - time()
+            if remaining_time <= 0:                
+                # avoiding the display of this page if no time remaining
+                return False
+            else:
+                return True
+        else:
+            return True
+
 
 class Decision(Page):
     form_model = "player"
