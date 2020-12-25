@@ -27,7 +27,7 @@ msgstr "Эмэгтэй"
 
 #: models.py:194
 msgid "Question: What payment treatment?"
-msgstr "Асуулт: Ямар төлбөрийн эмчилгээ хийдэг вэ?"
+msgstr "Асуулт: Ямар төлбөрийн системийг сонгох вэ?"
 
 #: models.py:202
 msgid "What is your age?"
@@ -35,15 +35,15 @@ msgstr "Та хэдэн настай вэ?"
 
 #: models.py:206
 msgid "What is your birth place?"
-msgstr "Таны төрсөн газар юу вэ?"
+msgstr "Таны төрсөн аймаг, хот юу вэ?"
 
 #: models.py:210
 msgid "What is your school?"
-msgstr "Танай сургууль юу вэ?"
+msgstr "Танай сургуулийнг нэр юу вэ?"
 
 #: models.py:214
 msgid "What is your school year?"
-msgstr "Таны хичээлийн жил хэд вэ?"
+msgstr "Хэддүгээр курс вэ?"
 
 #: models.py:218
 msgid "What is your field of study?"
@@ -51,20 +51,20 @@ msgstr "Та ямар чиглэлээр сурдаг вэ?"
 
 #: models.py:222
 msgid "How many brothers do you have?"
-msgstr "Та хэдэн ахтай вэ?"
+msgstr "Та хэдэн ах болон эрэгтэй дүүтэй вэ?"
 
 #: models.py:226
 msgid "How many sisters do you have?"
-msgstr "Та хэдэн эгчтэй вэ?"
+msgstr "Та хэдэн эгч болон эмэгтэй дүүтэй вэ?"
 
 #: models.py:230
 msgid "Explain briefly the reason behind your choice in Stage 3 (short answer)"
 msgstr ""
-"3-р шатнаас сонголтынхоо цаад шалтгааныг товч тайлбарла (богино хариулт)"
+"3-р шатны сонголтынхоо цаад шалтгааныг товч тайлбарла (богино хариулт)"
 
 #: templates/random_number_game/ChoicePage.html:6
 msgid "What is your payment choice for stage 3?"
-msgstr "3-р шатанд төлөх төлбөрийн сонголт юу вэ?"
+msgstr "3-р шатны төлбөрийн систэмийн сонголт юу вэ?"
 
 #: templates/random_number_game/ChoicePage.html:12
 msgid ""
@@ -118,7 +118,7 @@ msgstr "Та сонголтоо оруулна уу."
 
 #: templates/random_number_game/FinalProcessingPage.html:14
 msgid "Processing results"
-msgstr "Боловсруулалтын үр дүн"
+msgstr "Тооцоолж байна"
 
 #: templates/random_number_game/GenderPage.html:6
 msgid "What is your gender?"
@@ -368,7 +368,7 @@ msgstr "Өөр асуух асуулт байна уу?"
 
 #: templates/random_number_game/Introduction.html:110
 msgid "If you finished reading, please press next."
-msgstr "Хэрэв та уншиж дууссан бол дараа нь дарна уу."
+msgstr "Хэрэв та уншиж дууссан бол Next товчийг дарна уу."
 
 #: templates/random_number_game/Payment.html:6
 msgid "Final Page"
@@ -416,11 +416,11 @@ msgstr "Зөв хариултууд:"
 
 #: templates/random_number_game/Results.html:12
 msgid "Stage is over. Proceed to next stage"
-msgstr "Тайз дууслаа. Дараагийн шатанд шилжинэ үү"
+msgstr "Үе шат дууслаа. Дараагийн шатанд шилжинэ үү"
 
 #: templates/random_number_game/Results.html:18
 msgid "The practice stage is over. Stage 1 will start now"
-msgstr "Дадлагын үе шат дууслаа. 1-р шат одоо эхэлнэ"
+msgstr "Дасгалын үе шат дууслаа. 1-р шат одоо эхэлнэ"
 
 #: templates/random_number_game/Survey.html:6
 msgid "Exit Survey"
