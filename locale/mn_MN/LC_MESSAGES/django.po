@@ -27,7 +27,7 @@ msgstr "Эмэгтэй"
 
 #: models.py:194
 msgid "Question: What payment treatment?"
-msgstr "Асуулт: Ямар төлбөрийн эмчилгээ хийдэг вэ?"
+msgstr "Асуулт: Ямар төлбөрийн системийг сонгох вэ?"
 
 #: models.py:202
 msgid "What is your age?"
@@ -35,15 +35,15 @@ msgstr "Та хэдэн настай вэ?"
 
 #: models.py:206
 msgid "What is your birth place?"
-msgstr "Таны төрсөн газар юу вэ?"
+msgstr "Таны төрсөн аймаг, хот юу вэ?"
 
 #: models.py:210
 msgid "What is your school?"
-msgstr "Танай сургууль юу вэ?"
+msgstr "Танай сургуулийнг нэр юу вэ?"
 
 #: models.py:214
 msgid "What is your school year?"
-msgstr "Таны хичээлийн жил хэд вэ?"
+msgstr "Хэддүгээр курс вэ?"
 
 #: models.py:218
 msgid "What is your field of study?"
@@ -51,20 +51,20 @@ msgstr "Та ямар чиглэлээр сурдаг вэ?"
 
 #: models.py:222
 msgid "How many brothers do you have?"
-msgstr "Та хэдэн ахтай вэ?"
+msgstr "Та хэдэн ах болон эрэгтэй дүүтэй вэ?"
 
 #: models.py:226
 msgid "How many sisters do you have?"
-msgstr "Та хэдэн эгчтэй вэ?"
+msgstr "Та хэдэн эгч болон эмэгтэй дүүтэй вэ?"
 
 #: models.py:230
 msgid "Explain briefly the reason behind your choice in Stage 3 (short answer)"
 msgstr ""
-"3-р шатнаас сонголтынхоо цаад шалтгааныг товч тайлбарла (богино хариулт)"
+"3-р шатны сонголтынхоо шалтгааныг товч тайлбарла (богино хариулт)"
 
 #: templates/random_number_game/ChoicePage.html:6
 msgid "What is your payment choice for stage 3?"
-msgstr "3-р шатанд төлөх төлбөрийн сонголт юу вэ?"
+msgstr "3-р шатны төлбөрийн систэмийн сонголт юу вэ?"
 
 #: templates/random_number_game/ChoicePage.html:12
 msgid ""
@@ -118,7 +118,7 @@ msgstr "Та сонголтоо оруулна уу."
 
 #: templates/random_number_game/FinalProcessingPage.html:14
 msgid "Processing results"
-msgstr "Боловсруулалтын үр дүн"
+msgstr "Тооцоолж байна"
 
 #: templates/random_number_game/GenderPage.html:6
 msgid "What is your gender?"
@@ -189,19 +189,13 @@ msgstr ""
 "хэлбэл компьютерийн дэлгэц дээр 1-9 хүртэлх тоонуудыг санамсаргүй байдлаар "
 "дарааллуулсан дүрс гарч ирэх ба та тухайн 9н тоог яг тэр дарааллаар нь "
 "ѳгѳгдсѳн хайрцагт шивэн оруулах шаардлагатай. Та аль болох олон тоог 3 "
-"минутын дотор шивэх хэрэгтэй ба “Next” товчийг дарж та хариултаа оруулан "
+"минутын дотор шивэх хэрэгтэй ба “Confirm” товчийг дарж та хариултаа оруулан "
 "дараагийн тоог шивэх боломжтой болно. \n"
 "\n"
 "Хэрвээ энэ үе шат нь таны орлого дээр нэмэгдэн бодогдохоор сонгогдвол /1-3 "
 "шатны аль нэг/ та 3 минутын дотор зөв хариулсан хариулт тус бүрд 1,500 "
 "төгрөг нэмж авах юм. Буруу хариултыг шивэж оруулсан байсан ч төлбөрөөс "
-"хасагдахгүй. Үүнээс гадна бид таны олсон орлоготой тэнцэх хэмжээний мѳнгийг "
-"Улсын Онцгой Комиссийн Ковид 19ийн тусламжийн санд хандив ѳргѳх болно. Энэ "
-"нь таны хир их зѳв хариулт оруулснаас л хамаарах ба таны ѳѳрийн орлогоос "
-"хасагдахгүй гэдгийг анхаарна уу. Энэ үе нь эхлэхээс өмнө танд 1 минутын "
-"хугацаатай дасгалын хэсэг өгөгдөх бөгөөд та энэ хугацаанд дэлгэцтэйгээ "
-"танилцаж хэрхэн ашиглахаа мэдэж авах боломжтой юм. Дасгалгын дараа 1-р шат "
-"эхлэх болно."
+"хасагдахгүй.  "
 
 #: templates/random_number_game/Introduction.html:36
 msgid ""
@@ -209,6 +203,10 @@ msgid ""
 "National Emergency Commission for Covid-19 fund. This is thanks to your "
 "performance."
 msgstr ""
+"Үүнээс гадна бид таны олсон орлоготой тэнцэх хэмжээний мѳнгийг "
+"Улсын Онцгой Комиссийн Ковид 19ийн тусламжийн санд хандив ѳргѳх болно. Энэ "
+"нь таны хир их зѳв хариулт оруулснаас л хамаарах ба таны ѳѳрийн орлогоос "
+"хасагдахгүй гэдгийг анхаарна уу."
 
 #: templates/random_number_game/Introduction.html:41
 msgid ""
@@ -217,6 +215,10 @@ msgid ""
 "practice the typing exercise, which do not count for your earning. "
 "Afterwards, Stage 1 will begin."
 msgstr ""
+"Энэ үе нь эхлэхээс өмнө танд 1 минутын "
+"хугацаатай дасгалын хэсэг өгөгдөх бөгөөд та энэ хугацаанд дэлгэцтэйгээ "
+"танилцаж хэрхэн ашиглахаа мэдэж авах боломжтой юм. Дасгалын дараа 1-р шат "
+"эхлэх болно."
 
 #: templates/random_number_game/Introduction.html:47
 msgid "Stage 2: Tournament payment"
@@ -269,11 +271,7 @@ msgstr ""
 "зөв хариулсан хариулт тус бүртээ 6,000 төгрөг авах бөгөөд бусад гурван "
 "гишүүд нь нэмэлт орлого авахгүй. Зөв хариултын оноо нь тэнцсэн тохиолдолд "
 "ижил гүйцэтгэлтэй гишүүдийн хооронд санамсаргүй байдлаар компьютер ялагчийг "
-"тодруулна. Үүнээс гадна бид таны олсон орлоготой тэнцэх хэмжээний мѳнгийг "
-"Улсын Онцгой Комиссийн Ковид 19ийн тусламжийн санд хандив ѳргѳх болно. Энэ "
-"нь таны хир их зѳв хариулт оруулснаас л хамаарах ба таны ѳѳрийн орлогоос "
-"хасагдахгүй гэдгийг анхаарна уу. Таны энэ шатны орлогыг судалгааны төгсгөлд "
-"хэлэх тул тэр болтол та ялсан эсэхээ мэдэгдэхгүй."
+"тодруулна."
 
 #: templates/random_number_game/Introduction.html:66
 #: templates/random_number_game/Introduction.html:95
@@ -282,12 +280,19 @@ msgid ""
 "National Emergency Commission for Covid-19 fund. If you earn zero, then "
 "nothing will be donated thanks to your performance."
 msgstr ""
+"Үүнээс гадна бид таны олсон орлоготой тэнцэх хэмжээний мѳнгийг "
+"Улсын Онцгой Комиссийн Ковид 19ийн тусламжийн санд хандив ѳргѳх болно. Энэ "
+"нь таны хир их зѳв хариулт оруулснаас л хамаарах ба таны ѳѳрийн орлогоос "
+"хасагдахгүй гэдгийг анхаарна уу."
+
 
 #: templates/random_number_game/Introduction.html:71
 msgid ""
 "You will not be informed about the outcome of the tournament until the end "
 "of the study."
 msgstr ""
+"Таны энэ шатны орлогыг судалгааны төгсгөлд "
+"хэлэх тул тэр болтол та ялсан эсэхээ мэдэгдэхгүй."
 
 #: templates/random_number_game/Introduction.html:76
 msgid "Stage 3: Choice between Piece rate payment and Tournament payment"
@@ -349,8 +354,7 @@ msgstr ""
 "гишүүдийн дунд санамсаргүй аргаар компьютер ялагчийг тодруулах болно. Таны "
 "грүпийн бүрэлдэхүүн нь өмнөх 2-р шатны гишүүд /2 эр, 2 эм/ хэвээрээ байх "
 "болно. \n"
-"Хэрэв та 2р шатыг нэмэлт орлогод бодогдохоор сонгосон бол судалгааг дуусах "
-"хүртэл таны 3-р шатны үр дүнгийн талаар танд мэдээллэх боломжгүй. \n"
+
 "Үүнээс гадна бид таны олсон орлоготой тэнцэх хэмжээний мѳнгийг Улсын Онцгой "
 "Комиссийн Ковид 19ийн тусламжийн санд хандив ѳргѳх болно. Энэ нь таны хир их "
 "зѳв хариулт оруулснаас л хамаарах ба таны ѳѳрийн орлогоос хасагдахгүй "
@@ -358,9 +362,11 @@ msgstr ""
 
 #: templates/random_number_game/Introduction.html:100
 msgid ""
-"If you choose the Tournament payment, you will not be informed about the "
-"outcome of the tournament until the end of the experiment"
+"Хэрэв та 2р шатыг нэмэлт орлогод бодогдохоор сонгосон бол судалгааг дуусах "
+"хүртэл таны 3-р шатны үр дүнгийн талаар танд мэдээллэх боломжгүй. \n"
 msgstr ""
+"Таны энэ шатны орлогыг судалгааны төгсгөлд "
+"хэлэх тул тэр болтол та ялсан эсэхээ мэдэгдэхгүй."
 
 #: templates/random_number_game/Introduction.html:105
 msgid "Any questions?"
@@ -368,7 +374,7 @@ msgstr "Өөр асуух асуулт байна уу?"
 
 #: templates/random_number_game/Introduction.html:110
 msgid "If you finished reading, please press next."
-msgstr "Хэрэв та уншиж дууссан бол дараа нь дарна уу."
+msgstr "Хэрэв та уншиж дууссан бол Next товчийг дарна уу."
 
 #: templates/random_number_game/Payment.html:6
 msgid "Final Page"
@@ -388,11 +394,11 @@ msgstr "төлбөр"
 
 #: templates/random_number_game/Payment.html:35
 msgid "Your total earnings are 28000"
-msgstr ""
+msgstr "Таны нийт орлого 28000"
 
 #: templates/random_number_game/Payment.html:36
 msgid "randomly selected stage is"
-msgstr ""
+msgstr "санамсаргүй сонгогдсон үэ шат нь"
 
 #: templates/random_number_game/Payment.html:42
 msgid "We will also donate"
@@ -402,7 +408,7 @@ msgstr ""
 msgid ""
 "the equivalent amount of your performance in the game, to the State "
 "Emergency Committee Covid-19 fund."
-msgstr ""
+msgstr "тэй тэнцэх хэмжээний мѳнгийг бид УОКт хандив ѳргѳх болно"
 
 #: templates/random_number_game/Results.html:6
 #, fuzzy
@@ -416,11 +422,11 @@ msgstr "Зөв хариултууд:"
 
 #: templates/random_number_game/Results.html:12
 msgid "Stage is over. Proceed to next stage"
-msgstr "Тайз дууслаа. Дараагийн шатанд шилжинэ үү"
+msgstr "Үе шат дууслаа. Дараагийн шатанд шилжинэ үү"
 
 #: templates/random_number_game/Results.html:18
 msgid "The practice stage is over. Stage 1 will start now"
-msgstr "Дадлагын үе шат дууслаа. 1-р шат одоо эхэлнэ"
+msgstr "Дасгалын үе шат дууслаа. 1-р шат одоо эхэлнэ"
 
 #: templates/random_number_game/Survey.html:6
 msgid "Exit Survey"
